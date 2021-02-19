@@ -32,7 +32,7 @@
       "argsIgnorePattern": "_"
     }],
     "import/extensions": [
-      "error",
+      "warn",
       "ignorePackages",
       {
         "ts": "never"

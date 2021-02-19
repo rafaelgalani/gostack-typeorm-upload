@@ -6,6 +6,8 @@
   "password": "docker",
   "database": "gostack_desafio06",
   "entities": ["./src/models/*.ts"],
+  "logging": true,
+  "synchronize": true,
   "migrations": ["./src/database/migrations/*.ts"],
   "cli": {
     "migrationsDir": "./src/database/migrations"
