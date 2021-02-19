@@ -6,6 +6,7 @@ import { getCustomRepository } from 'typeorm';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
 import DeleteTransactionService from '../services/DeleteTransactionService';
+import ImportTransactionsService, { ImportedTransaction } from '../services/ImportTransactionsService';
 import Transaction from '../models/Transaction';
 
 const upload = multer({ dest: 'tmp/csv/' });
@@ -37,22 +38,21 @@ transactionsRouter.delete('/:id', async (request, response) => {
 transactionsRouter.post(
   '/import',
   upload.single('file'),
-  async (request, _) => {
-    const rows: Partial<Transaction>[] = [];
-    fs.createReadStream(request.file.path)
-      .pipe(csv.parse({ headers: true }))
-      .pipe(
-        csv.format<Partial<Transaction>, Partial<Transaction>>({
-          headers: true,
-        }),
-      )
-      .transform((row, next) => {
-        rows.push(row);
-        next(null, row);
+  async (request, response) => {
+    const rows: ImportedTransaction[] = [];
+    const content = fs.readFileSync(request.file.path, 'utf8');
+
+    await csv
+      .parseString<ImportedTransaction, ImportedTransaction>(content, {
+        headers: true,
+        trim: true,
       })
-      .on('end', () => {
-        // eslint-disable-next-line no-console
-        console.log(rows);
+      .on('data', row => {
+        rows.push(row);
+      })
+      .on('end', async () => {
+        await new ImportTransactionsService().execute(rows);
+        return response.status(201).json(rows);
       });
   },
 );
