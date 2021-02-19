@@ -6,8 +6,9 @@ import { getCustomRepository } from 'typeorm';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
 import DeleteTransactionService from '../services/DeleteTransactionService';
-import ImportTransactionsService, { ImportedTransaction } from '../services/ImportTransactionsService';
-import Transaction from '../models/Transaction';
+import ImportTransactionsService, {
+  ImportedTransaction,
+} from '../services/ImportTransactionsService';
 
 const upload = multer({ dest: 'tmp/csv/' });
 
