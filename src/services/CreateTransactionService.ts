@@ -1,6 +1,7 @@
 // import AppError from '../errors/AppError';
 
 import { getCustomRepository, getRepository } from 'typeorm';
+import AppError from '../errors/AppError';
 import Category from '../models/Category';
 import Transaction from '../models/Transaction';
 import TransactionsRepository from '../repositories/TransactionsRepository';
@@ -11,9 +12,14 @@ class CreateTransactionService {
     value,
     category,
     type,
-  }: Partial<Transaction> & { category: string }): Promise<Transaction> {
+  }: Partial<Transaction> & { category: string; value: number }): Promise<
+    Transaction
+  > {
     const transactionRepository = getCustomRepository(TransactionsRepository);
-
+    const { balance } = await transactionRepository.getBalance();
+    if (balance.total < value && type === 'outcome') {
+      throw new AppError('Nem pode.');
+    }
     const newTransaction = new Transaction();
     Object.assign(newTransaction, { title, value, type });
 

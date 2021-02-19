@@ -1,10 +1,10 @@
 // import AppError from '../errors/AppError';
-import TransactionRepository from '../repositories/TransactionsRepository';
+import { getRepository } from 'typeorm';
+import Transaction from '../models/Transaction';
 
 class DeleteTransactionService {
   public async execute(transactionId: string): Promise<void> {
-    const transactionRepository = new TransactionRepository();
-    await transactionRepository.delete(transactionId);
+    await getRepository(Transaction).delete(transactionId);
   }
 }
 

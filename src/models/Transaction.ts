@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import Category from './Category';
 
-@Entity()
+@Entity('transactions')
 class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,6 +26,7 @@ class Transaction {
   @ManyToOne(_ => Category, {
     cascade: ['insert', 'update'],
     primary: false,
+    eager: true,
   })
   @JoinColumn({
     name: 'category_id',

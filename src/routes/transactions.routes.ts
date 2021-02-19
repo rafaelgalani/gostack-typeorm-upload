@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import * as csv from 'fast-csv';
+import { getCustomRepository } from 'typeorm';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
 import DeleteTransactionService from '../services/DeleteTransactionService';
@@ -11,8 +12,9 @@ const upload = multer({ dest: 'tmp/csv/' });
 
 const transactionsRouter = Router();
 
-transactionsRouter.get('/', async () => {
-  return new TransactionsRepository().find();
+transactionsRouter.get('/', async (_, response) => {
+  const result = await getCustomRepository(TransactionsRepository).getBalance();
+  return response.status(200).json(result);
 });
 
 transactionsRouter.post('/', async (request, response) => {
